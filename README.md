@@ -48,16 +48,14 @@ The relevant IR codes can be obtained via a search for your particular remote, o
 The lines:
 
 ```C
-if (IRresults.value == IR_ON) {
+if (IrReceiver.decodedIRData.decodedRawData == IR_ON) {
 ```
 
 ```C
-if ((IRresults.value == IR_OFF1) || (IRresults.value == IR_OFF2)) {
+if ((IrReceiver.decodedIRData.decodedRawData == IR_OFF1) || (IrReceiver.decodedIRData.decodedRawData == IR_OFF2)) {
 ```
 
 give examples of how to use single or multiple codes for either the on or off action, and can be configured according to your needs, along with the definitions of the `IR_ONx` and `IR_OFFx` values.
-
-Note: The firmware uses version 2.8.0 of the IRremote library; versions 3.x onwards cannot be used as the decode functions were changed.
 
 ### LEDs
 
