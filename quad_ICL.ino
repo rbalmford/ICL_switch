@@ -1,5 +1,5 @@
 //////////////////////////////////////
-////  dual ICL switch + IR  v1.0  ////
+////  dual ICL switch + IR  v1.1  ////
 ////  (c) 2021  R. Balmford       ////
 //////////////////////////////////////
 
@@ -8,9 +8,9 @@
 #define INT_STBY   16
 #define INT_ON     255
 
-#define IR_ON    0x5EA1C03E
-#define IR_OFF1  0x5EA100FE
-#define IR_OFF2  0x7E8154AB
+#define IR_ON    0x7C03857A
+#define IR_OFF1  0x7F00857A
+#define IR_OFF2  0xD52A817E
 
 #define IR_RECEIVE_PIN  8
 #define PIN_SW          7
@@ -26,10 +26,7 @@
 
 #define DEBOUNCE_DELAY  50    // ms
 
-#include <IRremote.h>    // Use version 2.8.0
-
-IRrecv         IRreceive(IR_RECEIVE_PIN);
-decode_results IRresults;
+#include <IRremote.h>
 
 ////////////////////////////////////////
 
@@ -110,7 +107,7 @@ void setup() {
     delay(100);
     digitalWrite(LED_BUILTIN, LOW);
 
-    IRreceive.enableIRIn();
+    IrReceiver.begin(IR_RECEIVE_PIN, DISABLE_LED_FEEDBACK);
 
 }    // setup
 
@@ -147,22 +144,24 @@ void loop() {
         }
     }
 
-    if (IRreceive.decode(&IRresults)) {
+    if (IrReceiver.decode()) {
         if (stateMOM) {                // IR only active if switch type is momentary
-            if (IRresults.value == IR_ON) {
+            if (IrReceiver.decodedIRData.decodedRawData == IR_ON) {
                 if (!stateON) {
                     stateON = true;
                     onoff(stateON);
                 }
             }
-            if ((IRresults.value == IR_OFF1) || (IRresults.value == IR_OFF2)) {
+            if ((IrReceiver.decodedIRData.decodedRawData == IR_OFF1) || (IrReceiver.decodedIRData.decodedRawData == IR_OFF2)) {
                 if (stateON) {
                     stateON = false;
                     onoff(stateON);
                 }
             }
         }
-        IRreceive.resume();    // Receive the next value
+        IrReceiver.resume();    // Receive the next value
     }
+
+    delay(10);
 
 }    // loop
